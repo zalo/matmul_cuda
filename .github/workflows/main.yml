@@ -30,7 +30,10 @@ jobs:
         with:
           method: local
           sub-packages: '["nvcc", "visual_studio_integration"]'
-          use-github-cache: false
+
+      - name: Windows - Enable CL.exe
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Test if nvcc is available
         run: nvcc -V
