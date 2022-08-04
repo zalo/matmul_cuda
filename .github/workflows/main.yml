@@ -1,0 +1,55 @@
+name: Build Binary
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run the action on this runner with nvcc subpackage only
+        uses: Jimver/cuda-toolkit
+        with:
+          method: network
+          sub-packages: '["nvcc"]'
+
+      - name: Test if nvcc is available
+        run: nvcc -V
+
+      - name: List paths (windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          ls $env:CUDA_PATH
+          ls $env:CUDA_PATH\bin
+          ls $env:CUDA_PATH\include
+      - name: List paths (linux)
+        if: runner.os == 'Linux'
+        run: |
+          ls $CUDA_PATH
+          ls $CUDA_PATH/bin
+          ls $CUDA_PATH/include
+
+      - name: Build Binary
+        run: nvcc -o matmul_cuda_v2 matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
+
+      - uses: actions/upload-artifact@v3
+        if: runner.os == 'Windows'
+        with:
+          name: matmul_cuda
+          path: ./matmul_cuda.exe
+      - uses: actions/upload-artifact@v3
+        if: runner.os == 'Linux'
+        with:
+          name: matmul_cuda
+          path: ./matmul_cuda
