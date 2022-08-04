@@ -20,6 +20,11 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       # Try printing %VCVARS_FILE%\..\..\..\Tools\MSVC\ to eventually get to cl.exe
+      - name: List paths (windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: echo %VCVARS_FILE%
+
 
       - uses: actions/checkout@v3
 
