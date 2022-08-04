@@ -23,7 +23,7 @@ jobs:
       - name: List paths (windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: ls %VCToolsInstallDir%\bin\Hostx64\x64
+        run: ls %VCToolsInstallDir%
 
       - uses: actions/checkout@v3
 
