@@ -19,11 +19,7 @@ jobs:
       #  if: runner.os == 'Windows'
       #  uses: ilammy/msvc-dev-cmd@v1
 
-      - name: List paths (windows)
-        if: runner.os == 'Windows'
-        #shell: powershell
-        run: |
-          echo "$VCVARS_FILE"
+      - run: echo "${{ env.VCVARS_FILE }}"
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
