@@ -20,10 +20,10 @@ jobs:
       #  uses: ilammy/msvc-dev-cmd@v1
 
       # Try printing %VCVARS_FILE%\..\..\..\Tools\MSVC\ to eventually get to cl.exe
-      - name: List paths (windows)
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: ls "%VCToolsInstallDir%\bin\Hostx64\x64"
+      #- name: List paths (windows)
+      #  if: runner.os == 'Windows'
+      #  shell: cmd
+      #  run: ls "%VCToolsInstallDir%\bin\Hostx64\x64"
 
       - uses: actions/checkout@v3
 
