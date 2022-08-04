@@ -23,7 +23,10 @@ jobs:
       - name: List paths (windows)
         if: runner.os == 'Windows'
         #shell: cmd
-        run: ls "$env:VCToolsInstallDir"
+        run: |
+          echo "VCToolsInstallDir=$VCToolsInstallDir" >> $env:VCToolsInstallDir
+          ls $env:VCToolsInstallDir
+          ls ${{env.VCToolsInstallDir}}
 
       - uses: actions/checkout@v3
 
