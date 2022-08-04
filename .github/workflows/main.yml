@@ -30,6 +30,7 @@ jobs:
         with:
           method: network
           sub-packages: '["nvcc", "visual_studio_integration"]'
+          use-github-cache: false
 
       - name: Test if nvcc is available
         run: nvcc -V
@@ -49,7 +50,7 @@ jobs:
       #    ls $CUDA_PATH/include
 
       - name: Build Binary
-        run: nvcc -o matmul_cuda_v2 matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
+        run: nvcc -o matmul_cuda matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
 
       - uses: actions/upload-artifact@v3
         if: runner.os == 'Windows'
