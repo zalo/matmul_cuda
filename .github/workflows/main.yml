@@ -20,7 +20,7 @@ jobs:
       #  uses: ilammy/msvc-dev-cmd@v1
       - name: List paths (windows)
         if: runner.os == 'Windows'
-        shell: powershell
+        #shell: powershell
         run: |
           ls C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\
           ls C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\
