@@ -21,7 +21,13 @@ jobs:
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
-        shell: powershell
+        #shell: powershell
+        run: |
+          echo %VCVARS_FILE%
+
+      - name: List paths (windows)
+        if: runner.os == 'Windows'
+        #shell: powershell
         run: |
           ls $env:VCVARS_FILE
 
