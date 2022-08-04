@@ -17,28 +17,36 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run the action on this runner with nvcc subpackage only
+      - name: Install CUDA with just nvcc
+        if: runner.os == 'Linux'
         uses: Jimver/cuda-toolkit@v0.2.8
         with:
           method: network
           sub-packages: '["nvcc"]'
 
+      - name: Install CUDA with nvcc and MSVC Integration
+        if: runner.os == 'Windows'
+        uses: Jimver/cuda-toolkit@v0.2.8
+        with:
+          method: network
+          sub-packages: '["nvcc", "visual_studio_integration"]'
+
       - name: Test if nvcc is available
         run: nvcc -V
 
-      - name: List paths (windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          ls $env:CUDA_PATH
-          ls $env:CUDA_PATH\bin
-          ls $env:CUDA_PATH\include
-      - name: List paths (linux)
-        if: runner.os == 'Linux'
-        run: |
-          ls $CUDA_PATH
-          ls $CUDA_PATH/bin
-          ls $CUDA_PATH/include
+      #- name: List paths (windows)
+      #  if: runner.os == 'Windows'
+      #  shell: powershell
+      #  run: |
+      #    ls $env:CUDA_PATH
+      #    ls $env:CUDA_PATH\bin
+      #    ls $env:CUDA_PATH\include
+      #- name: List paths (linux)
+      #  if: runner.os == 'Linux'
+      #  run: |
+      #    ls $CUDA_PATH
+      #    ls $CUDA_PATH/bin
+      #    ls $CUDA_PATH/include
 
       - name: Build Binary
         run: nvcc -o matmul_cuda_v2 matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
