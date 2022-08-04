@@ -23,7 +23,7 @@ jobs:
       - name: List paths (windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: ls "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.32.31326\bin\HostX64\x64"
+        run: ls "%VCToolsInstallDir%\bin\Hostx64\x64"
 
       - uses: actions/checkout@v3
 
@@ -71,8 +71,8 @@ jobs:
       - name: Windows - Build Binary
         if: runner.os == 'Windows'
         shell: cmd
-        run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.32.31326\bin\HostX64\x64" -O 3 -arch=all --extra-device-vectorization
-        #run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "%VCToolsInstallDir%\bin\Hostx64\x64" -O 3 -arch=all --extra-device-vectorization
+        #run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.32.31326\bin\HostX64\x64" -O 3 -arch=all --extra-device-vectorization
+        run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "%VCToolsInstallDir%\bin\Hostx64\x64" -O 3 -arch=all --extra-device-vectorization
 
       - name: Windows - Upload Build
         uses: actions/upload-artifact@v3
