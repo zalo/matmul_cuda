@@ -21,15 +21,15 @@ jobs:
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
-        #shell: powershell
+        shell: powershell
         run: |
-          ls "C:\Program Files (x86)\Microsoft Visual Studio\Shared\Common\"
+          ls $env:VCVARS_FILE
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
-        shell: powershell
+        #shell: powershell
         run: |
-          ls $env:VCINSTALLDIR
+          ls %VCVARS_FILE%\..\..\..\Tools\MSVC\
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
