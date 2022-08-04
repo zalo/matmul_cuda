@@ -3,8 +3,8 @@ name: Build Binary
 on:
   push:
     branches: [main]
-  pull_request:
-  workflow_dispatch:
+  #pull_request:
+  #workflow_dispatch:
 
 jobs:
   Build:
@@ -15,6 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Windows - Enable CL.exe
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - uses: actions/checkout@v3
 
       - name: Linux - Install CUDA with just nvcc
@@ -31,9 +35,11 @@ jobs:
           method: local
           sub-packages: '["nvcc", "visual_studio_integration"]'
 
-      - name: Windows - Enable CL.exe
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
+      #- name: Windows - Add CUDA Paths
+      #  run: |
+      #    export CPATH=/usr/local/cuda-11.0/targets/x86_64-linux/include:$CPATH
+      #    export LD_LIBRARY_PATH=/usr/local/cuda-11.0/targets/x86_64-linux/lib:$LD_LIBRARY_PATH
+      #    export PATH=/usr/local/cuda-11.0/bin:$PATH
 
       - name: Test if nvcc is available
         run: nvcc -V
