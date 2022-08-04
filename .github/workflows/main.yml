@@ -15,16 +15,15 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Windows - Enable CL.exe
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
+      #- name: Windows - Enable CL.exe
+      #  if: runner.os == 'Windows'
+      #  uses: ilammy/msvc-dev-cmd@v1
 
       # Try printing %VCVARS_FILE%\..\..\..\Tools\MSVC\ to eventually get to cl.exe
       - name: List paths (windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: echo %VCVARS_FILE%
-
+        run: ls %VCToolsInstallDir%\bin\Hostx64\x64
 
       - uses: actions/checkout@v3
 
@@ -66,8 +65,14 @@ jobs:
       - name: Test if nvcc is available
         run: nvcc -V
 
-      - name: Build Binary
+      - name: Linux - Build Binary
+        if: runner.os == 'Linux'
         run: nvcc -o matmul_cuda matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
+
+      - name: Windows - Build Binary
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin %VCToolsInstallDir%\bin\Hostx64\x64 -O 3 -arch=all --extra-device-vectorization
 
       - name: Windows - Upload Build
         uses: actions/upload-artifact@v3
