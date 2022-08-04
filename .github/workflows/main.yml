@@ -23,7 +23,7 @@ jobs:
         if: runner.os == 'Windows'
         #shell: powershell
         run: |
-          echo ${{ VCVARS_FILE }}
+          echo $VCVARS_FILE
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
