@@ -18,17 +18,18 @@ jobs:
       #- name: Windows - Enable CL.exe
       #  if: runner.os == 'Windows'
       #  uses: ilammy/msvc-dev-cmd@v1
-      - name: List paths (windows)
-        if: runner.os == 'Windows'
-        #shell: powershell
-        run: |
-          ls %VCINSTALLDIR%\bin\
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
         #shell: powershell
         run: |
-          ls "C:\Program Files (x86)\Microsoft Visual Studio\Shared\VC\Tools\MSVC\"
+          ls "C:\Program Files (x86)\Microsoft Visual Studio\Shared\Common\"
+
+      - name: List paths (windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          ls $env:VCINSTALLDIR
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
