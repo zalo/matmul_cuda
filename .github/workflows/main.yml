@@ -22,7 +22,13 @@ jobs:
         if: runner.os == 'Windows'
         #shell: powershell
         run: |
-          ls "C:\Program Files (x86)\Microsoft Visual Studio\"
+          ls "C:\Program Files (x86)\Microsoft Visual Studio\Shared"
+
+      - name: List paths (windows)
+        if: runner.os == 'Windows'
+        #shell: powershell
+        run: |
+          ls "C:\Program Files (x86)\Microsoft Visual Studio\Shared\VC\Tools\MSVC\"
 
       - name: List paths (windows)
         if: runner.os == 'Windows'
