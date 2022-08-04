@@ -15,9 +15,16 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Windows - Enable CL.exe
+      #- name: Windows - Enable CL.exe
+      #  if: runner.os == 'Windows'
+      #  uses: ilammy/msvc-dev-cmd@v1
+      - name: List paths (windows)
         if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
+        shell: powershell
+        run: |
+          ls C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\
+          ls C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\
+          ls C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\
 
       - uses: actions/checkout@v3
 
@@ -48,6 +55,7 @@ jobs:
           ls $env:CUDA_PATH
           ls $env:CUDA_PATH\bin
           ls $env:CUDA_PATH\include
+          ls C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\
       - name: List paths (linux)
         if: runner.os == 'Linux'
         run: |
