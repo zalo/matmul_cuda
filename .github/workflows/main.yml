@@ -29,21 +29,25 @@ jobs:
           method: network
           sub-packages: '["nvcc"]'
 
-      - name: Windows - Install CUDA with nvcc and MSVC Integration
-        if: runner.os == 'Windows'
-        uses: Jimver/cuda-toolkit@v0.2.8
-        with:
-          method: local
-          sub-packages: '["nvcc", "visual_studio_integration", "cudart"]'
+      #- name: Windows - Install CUDA with nvcc and MSVC Integration
+      #  if: runner.os == 'Windows'
+      #  uses: Jimver/cuda-toolkit@v0.2.8
+      #  with:
+      #    method: local
+      #    sub-packages: '["nvcc", "visual_studio_integration", "cudart"]'
 
       - name: Linux - Build Binary
         if: runner.os == 'Linux'
         run: nvcc -o matmul_cuda matmul_cuda.cu -O 3 -arch=all --extra-device-vectorization
 
-      - name: Windows - Build Binary
+      #- name: Windows - Build Binary
+      #  if: runner.os == 'Windows'
+      #  run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.32.31326\bin\HostX64\x64" -O 3 -arch=all --extra-device-vectorization
+      #  #run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "$env:VCToolsInstallDir\bin\Hostx64\x64" -O 3 -arch=all --extra-device-vectorization
+
+      - name: Windows - Fake Build Binary
         if: runner.os == 'Windows'
-        run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.32.31326\bin\HostX64\x64" -O 3 -arch=all --extra-device-vectorization
-        #run: nvcc -o matmul_cuda matmul_cuda.cu -ccbin "$env:VCToolsInstallDir\bin\Hostx64\x64" -O 3 -arch=all --extra-device-vectorization
+        run: echo This is a fake executable file for speed > matmul_cuda.exe
 
       - name: Windows - Upload Build
         uses: actions/upload-artifact@v3
@@ -75,5 +79,4 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
-          files: |
-            matmul_cuda*
+          files: /home/runner/work/matmul_cuda/matmul_cuda/matmul_cuda*
