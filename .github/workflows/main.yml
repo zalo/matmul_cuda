@@ -76,4 +76,4 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            matmul_cuda_*.zip
+            matmul_cuda*
