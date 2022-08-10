@@ -47,7 +47,7 @@ jobs:
 
       - name: Windows - Fake Build Binary
         if: runner.os == 'Windows'
-        run: echo This is a fake executable file for speed > matmul_cuda.exe
+        run: echo This is a fake executable file for speed > matmul_cuda_windows.exe
 
       - name: Windows - Upload Build
         uses: actions/upload-artifact@v3
