@@ -79,4 +79,6 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
-          files: /home/runner/work/matmul_cuda/matmul_cuda/matmul_cuda*
+          files: |
+            /home/runner/work/matmul_cuda/matmul_cuda/matmul_cuda_linux
+            /home/runner/work/matmul_cuda/matmul_cuda/matmul_cuda_windows
