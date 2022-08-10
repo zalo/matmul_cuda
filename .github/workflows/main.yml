@@ -40,7 +40,7 @@ jobs:
         uses: Jimver/cuda-toolkit@v0.2.8
         with:
           method: local
-          sub-packages: '["nvcc", "visual_studio_integration", "cudart"]'
+          #sub-packages: '["nvcc", "visual_studio_integration", "cudart"]'
 
       #- name: Windows - Add CUDA Paths
       #  run: |
