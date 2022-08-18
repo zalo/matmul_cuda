@@ -4,16 +4,14 @@
 // CUDA Kernel for multiplying matrices
 __global__
 void matmul(int workingShapeX, int workingShapeY, int currentShapeY, int newShapeY, 
-            int64_t *mat1, int64_t *mat2, int64_t *out) {
+            unsigned long long int *mat1, unsigned long long int *mat2, unsigned long long int *out) {
   int i = (blockIdx.x * blockDim.x) + threadIdx.x;
   int j = (blockIdx.y * blockDim.y) + threadIdx.y;
-  if(i < workingShapeX && j < workingShapeY){
-    int64_t sum = 0;
-    for (int k = 0; k < currentShapeY; k++) {
-      sum += mat1[(i *  currentShapeY) + k] * 
-             mat2[(k *      newShapeY) + j];
-    }
-    out[(i * workingShapeY) + j] = sum;
+  int k = (blockIdx.z * blockDim.z) + threadIdx.z;
+  if(i < workingShapeX && j < workingShapeY && k < currentShapeY){
+    atomicAdd(out + (((i * workingShapeY) + j) * 8),
+                 mat1[(i * currentShapeY) + k] *
+                 mat2[(k *     newShapeY) + j]);
   }
 }
 
@@ -43,7 +41,7 @@ int main(int argc, char *argv[]) {
         workingMatrix = (int64_t*)malloc(workingLength);
 
         // Multiply Current and New Matrices together
-        if (workingLength > 10000) { // Choose GPU or CPU based on Matrix Size
+        if ((size_t)workingLength * (size_t)currentShape[1] > 1000000) { // Choose GPU or CPU based on Matrix Size
           // Allocate Matrices on GPU
           int64_t *d_workingMatrix; cudaMalloc(&d_workingMatrix, workingLength);
           int64_t *d_currentMatrix; cudaMalloc(&d_currentMatrix, currentLength);
@@ -54,11 +52,14 @@ int main(int argc, char *argv[]) {
           cudaMemcpy(    d_newMatrix,     newMatrix,     newLength, cudaMemcpyHostToDevice);
 
           // Multiply Matrices on GPU
-          dim3 threadsPerBlock(32, 32); // 1024 is typically the max allowable threads per block
+          dim3 threadsPerBlock(10, 10, 10); // 1024 is typically the max allowable threads per block
           dim3 numBlocks((workingShape[0] / threadsPerBlock.x) + 1,
-                         (workingShape[1] / threadsPerBlock.y) + 1);
+                         (workingShape[1] / threadsPerBlock.y) + 1,
+                         (currentShape[1] / threadsPerBlock.z) + 1);
           matmul<<<numBlocks, threadsPerBlock>>>( workingShape[0], workingShape[1], currentShape[1], newShape[1],
-                                                  d_currentMatrix, d_newMatrix, d_workingMatrix);
+                                                  reinterpret_cast<unsigned long long int *>(d_currentMatrix), 
+                                                  reinterpret_cast<unsigned long long int *>(d_newMatrix), 
+                                                  reinterpret_cast<unsigned long long int *>(d_workingMatrix));
 
           // Copy Solution back from GPU
           cudaMemcpy(workingMatrix, d_workingMatrix, workingLength, cudaMemcpyDeviceToHost);
