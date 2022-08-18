@@ -37,9 +37,9 @@ int main(int argc, char *argv[]) {
         // Allocate the Working Matrix
         workingShape[0]   = currentShape[0];
         workingShape[1]   =     newShape[1];
-        int workingLength = workingShape[0] * workingShape[1] * sizeof(int64_t);
-        int currentLength = currentShape[0] * currentShape[1] * sizeof(int64_t);
-        int     newLength =     newShape[0] *     newShape[1] * sizeof(int64_t);
+        size_t workingLength = (size_t)workingShape[0] * (size_t)workingShape[1] * sizeof(int64_t);
+        size_t currentLength = (size_t)currentShape[0] * (size_t)currentShape[1] * sizeof(int64_t);
+        size_t     newLength = (size_t)    newShape[0] * (size_t)    newShape[1] * sizeof(int64_t);
         workingMatrix = (int64_t*)malloc(workingLength);
 
         // Multiply Current and New Matrices together
@@ -69,10 +69,10 @@ int main(int argc, char *argv[]) {
           cudaFree(    d_newMatrix);
         } else {
           // Naive CPU Fallback for Small Matrices
-          for (int i = 0; i < currentShape[0]; i++) {       // i is the row in this matrix
-            for (int j = 0; j <     newShape[1]; j++) {     // j is the column in the other matrix
+          for (size_t i = 0; i < currentShape[0]; i++) {       // i is the row in this matrix
+            for (size_t j = 0; j <     newShape[1]; j++) {     // j is the column in the other matrix
               workingMatrix[(i * workingShape[1]) + j] = 0; // malloc doesn't initialize to zeros on Linux...
-              for (int k = 0; k < currentShape[1]; k++) {   // k is the column in this matrix
+              for (size_t k = 0; k < currentShape[1]; k++) {   // k is the column in this matrix
                 workingMatrix[(i * workingShape[1]) + j] +=
                 currentMatrix[(i * currentShape[1]) + k] *
                     newMatrix[(k *     newShape[1]) + j];
