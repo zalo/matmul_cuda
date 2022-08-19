@@ -1,15 +1,27 @@
 #include <stdio.h>
 #include <stdint.h>
 
+// CUDA Operation for adding signed 64-bit integers
+__device__ double atomicAdd64(int64_t* address, int64_t val) {
+    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+    int64_t old = *address_as_ull, assumed;
+    do {
+        assumed = old;
+        int64_t result = val + assumed;
+        old = atomicCAS(address_as_ull, *reinterpret_cast<unsigned long long int*>(&assumed),
+                                        *reinterpret_cast<unsigned long long int*>(&result ));
+    } while (assumed != old); // Note: uses integer comparison to avoid hang in case of NaN (since NaN != NaN)
+    return old;
+}
+
 // CUDA Kernel for multiplying matrices
-__global__
-void matmul(int workingShapeX, int workingShapeY, int currentShapeY, int newShapeY, 
-            unsigned long long int *mat1, unsigned long long int *mat2, unsigned long long int *out) {
+__global__ void matmul(int workingShapeX, int workingShapeY, int currentShapeY, int newShapeY, 
+            int64_t *mat1, int64_t *mat2, int64_t *out) {
   int i = (blockIdx.x * blockDim.x) + threadIdx.x;
   int j = (blockIdx.y * blockDim.y) + threadIdx.y;
   int k = (blockIdx.z * blockDim.z) + threadIdx.z;
   if(i < workingShapeX && j < workingShapeY && k < currentShapeY){
-    atomicAdd(out + (((i * workingShapeY) + j) * 8),
+    atomicAdd64(out + (((i * workingShapeY) + j) * 8),
                  mat1[(i * currentShapeY) + k] *
                  mat2[(k *     newShapeY) + j]);
   }
@@ -57,9 +69,9 @@ int main(int argc, char *argv[]) {
                          (workingShape[1] / threadsPerBlock.y) + 1,
                          (currentShape[1] / threadsPerBlock.z) + 1);
           matmul<<<numBlocks, threadsPerBlock>>>( workingShape[0], workingShape[1], currentShape[1], newShape[1],
-                                                  reinterpret_cast<unsigned long long int *>(d_currentMatrix), 
-                                                  reinterpret_cast<unsigned long long int *>(d_newMatrix), 
-                                                  reinterpret_cast<unsigned long long int *>(d_workingMatrix));
+                                                  reinterpret_cast<int64_t *>(d_currentMatrix), 
+                                                  reinterpret_cast<int64_t *>(d_newMatrix), 
+                                                  reinterpret_cast<int64_t *>(d_workingMatrix));
 
           // Copy Solution back from GPU
           cudaMemcpy(workingMatrix, d_workingMatrix, workingLength, cudaMemcpyDeviceToHost);
